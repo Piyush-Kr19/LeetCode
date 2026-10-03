@@ -1,85 +1,67 @@
 class Solution {
-    public static void reverse(int[] arr) {
-        int i = 0;
-        int j = arr.length - 1;
-
-        while (i < j) {
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-
-            i++;
-            j--;
-        }
-    }
-
     public int[] sortedSquares(int[] nums) {
+        int n = nums.length;
+        List<Integer> neg = new ArrayList<>();
+        List<Integer> pos = new ArrayList<>();
 
-        int n = 0;
-        int m = 0;
+        // Separate negative and positive numbers
+        for (int num : nums) {
+            if (num < 0)
+                neg.add(num);
+            else
+                pos.add(num);
+        }
 
-        // Count negative and non-negative
-        for (int k = 0; k < nums.length; k++) {
-            if (nums[k] < 0) {
-                n++;
+        // Case 1: No negative numbers
+        if (neg.size() == 0) {
+            for (int i = 0; i < pos.size(); i++)
+                pos.set(i, pos.get(i) * pos.get(i));
+            return pos.stream().mapToInt(Integer::intValue).toArray();
+        }
+
+        // Case 2: No positive numbers
+        if (pos.size() == 0) {
+            for (int i = 0; i < neg.size(); i++)
+                neg.set(i, neg.get(i) * neg.get(i));
+            Collections.reverse(neg);
+            return neg.stream().mapToInt(Integer::intValue).toArray();
+        }
+
+        // Case 3: Both negative and positive exist
+        int i = 0, j = 0, id = 0;
+        int n1 = neg.size();
+        int n2 = pos.size();
+        int[] res = new int[n1 + n2];
+
+        // Square negatives and reverse them
+        for (i = 0; i < n1; i++)
+            neg.set(i, neg.get(i) * neg.get(i));
+        Collections.reverse(neg);
+
+        // Square positives
+        for (i = 0; i < n2; i++)
+            pos.set(i, pos.get(i) * pos.get(i));
+
+        // Merge two sorted lists
+        i = 0; // j=0
+        j=0;
+        while (i < n1 && j < n2) {
+            if (neg.get(i) <= pos.get(j)) {
+                res[id++] = neg.get(i++);
+                // res[id]=neg[i]
+                // id++;
+                // i++
             } else {
-                m++;
+                res[id++] = pos.get(j++);
             }
-        }
+        } // while loop khatam
 
-        int[] a = new int[n];
-        int[] b = new int[m];
+        while (i < n1)
+            res[id++] = neg.get(i++);
 
-        int i = 0;
-        int j = 0;
+        while (j < n2)
+            res[id++] = pos.get(j++);
 
-        // Separate negative and non-negative
-        for (int k = 0; k < nums.length; k++) {
-            if (nums[k] >= 0) {
-                b[j] = nums[k];
-                j++;
-            } else {
-                a[i] = nums[k];
-                i++;
-            }
-        }
-
-        // Square a
-        for (i = 0; i < a.length; i++) {
-            a[i] = a[i] * a[i];
-        }
-
-        // Square b
-        for (j = 0; j < b.length; j++) {
-            b[j] = b[j] * b[j];
-        }
-
-        // Reverse a
-        reverse(a);
-
-        // Reset pointers for merging
-        i = 0;
-        j = 0;
-
-        int index = 0;
-        int[] arr = new int[n + m];
-
-        // Merge
-        while (i < n && j < m) {
-
-            if (a[i] <= b[j]) {
-                arr[index++] = a[i++];
-            } else {
-                arr[index++] = b[j++];
-            }
-        }
-
-        while (j < m) {
-            arr[index++] = b[j++];
-        }
-        while (i < n) {
-            arr[index++] = a[i++];
-        }
-        return arr;
+        return res;
     }
 }
