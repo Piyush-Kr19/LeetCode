@@ -34,13 +34,13 @@ class Solution {
 
                     // Skip duplicate left values
                     while (left < n &&
-                           nums[left] == nums[left - 1]) {
+                        nums[left] == nums[left - 1]) {
                         left++;
                     }
 
                     // Skip duplicate right values
                     while (right >= 0 &&
-                           nums[right] == nums[right + 1]) {
+                        nums[right] == nums[right + 1]) {
                         right--;
                     }
                 }
